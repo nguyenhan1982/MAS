@@ -98,15 +98,17 @@ def get_status():
 @app.route('/api/mission/<mission_id>/synthesize', methods=['POST'])
 def synthesize_mission(mission_id):
     try:
-        subprocess.run(
+        # Chay ngam (Popen) thay vi run de tranh timeout tren Cloud
+        subprocess.Popen(
             [sys.executable, str(WORKSPACE_ROOT / "tools" / "synthesize_results.py"), mission_id],
-            capture_output=True, check=True, encoding="utf-8"
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True
         )
-        board = storage.get_board()
-        mission = next((m for m in board.get("missions", []) if m["id"] == mission_id), None)
-        if mission and mission.get("report"):
-            return jsonify({"success": True, "report": mission["report"]})
-        return jsonify({"success": False, "error": "No report found"})
+        return jsonify({
+            "success": True, 
+            "message": "AI Synthesis started in background. Please wait ~1 minute and refresh."
+        }), 202
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 

@@ -136,12 +136,24 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.style.display = 'flex';
         try {
             const response = await fetch(`${API_BASE_URL}/api/mission/${missionId}/synthesize`, { method: 'POST' });
+            
+            // Neu Backend tra ve 202, nghia la da bat dau chay ngam
+            if (response.status === 202) {
+                alert('Đang khởi tạo báo cáo AI ngầm... Báo cáo sẽ tự hiển thị trên Dashboard sau khoảng 1 phút. Bạn có thể tiếp tục làm việc khác.');
+                return;
+            }
+
             const result = await response.json();
-            if (result.success) {
+            if (result.success && result.report) {
                 showMarkdownModal(`Báo cáo Mission: ${missionId}`, result.report, true, missionId);
                 fetchBoard();
             }
-        } catch (error) { alert('Lỗi kết nối'); } finally { loadingOverlay.style.display = 'none'; }
+        } catch (error) { 
+            console.error('Synthesis error:', error);
+            // alert('Co loi khi ket noi server.'); 
+        } finally { 
+            loadingOverlay.style.display = 'none'; 
+        }
     };
 
     window.reSynthesize = async (missionId) => {
