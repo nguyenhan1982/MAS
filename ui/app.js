@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyResultBtn = document.getElementById('copyResultBtn');
     const downloadPdfBtn = document.getElementById('downloadPdfBtn');
 
-    // Agent Select Modal
+    // Agent Select Modal (Gữ lại cho các tính năng khác nếu cần)
     const agentSelectModal = document.getElementById('agentSelectModal');
     const closeAgentModal = document.getElementById('closeAgentModal');
     const agentListContainer = document.getElementById('agentListContainer');
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
                                 <div class="status-pill status-${task.status}">${task.status.toUpperCase()}</div>
                                 <div style="display:flex; gap: 0.3rem;">
-                                    <button class="btn-view-result" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; margin:0;" onclick="openRetaskModal('${mission.id}', '${task.id}')">Làm lại</button>
+                                    <button class="btn-view-result" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; margin:0;" onclick="confirmRerun('${mission.id}', '${task.id}')" title="Yêu cầu Agent thực hiện lại nhiệm vụ này">Làm lại</button>
                                     ${task.status === 'done' ? `<button class="btn-view-result" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; margin:0;" onclick="showTaskResult('${mission.id}', '${task.id}')">Kết quả</button>` : ''}
                                 </div>
                             </div>
@@ -104,6 +104,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `).join('');
+    };
+
+    window.confirmRerun = async (missionId, taskId) => {
+        if (!confirm(`Bạn có chắc muốn Agent thực hiện lại nhiệm vụ #${taskId}?`)) return;
+        loadingOverlay.style.display = 'flex';
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/task/rerun`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mission_id: missionId, task_id: taskId })
+            });
+            if ((await response.json()).success) fetchBoard();
+        } catch (error) { alert('Lỗi kết nối server'); } finally { loadingOverlay.style.display = 'none'; }
     };
 
     window.deleteMission = async (missionId) => {
@@ -162,35 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeModal.addEventListener('click', () => resultModal.classList.remove('active'));
     closeAgentModal.addEventListener('click', () => agentSelectModal.classList.remove('active'));
-
-    window.openRetaskModal = async (missionId, taskId) => {
-        agentListContainer.innerHTML = 'Đang quét...';
-        agentSelectModal.classList.add('active');
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/status`);
-            const agents = await response.json();
-            agentListContainer.innerHTML = agents.map(agent => `
-                <div class="agent-item" onclick="confirmRetask('${missionId}', '${taskId}', '${agent.agent}')">
-                    ${agent.agent} (${agent.status})
-                </div>
-            `).join('');
-        } catch (error) { alert('Lỗi kết nối'); }
-    };
-
-    window.confirmRetask = async (missionId, taskId, agentName) => {
-        if (!confirm(`Giao cho ${agentName}?`)) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/task/rerun`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mission_id: missionId, task_id: taskId, agent_name: agentName })
-            });
-            if ((await response.json()).success) {
-                agentSelectModal.classList.remove('active');
-                fetchBoard();
-            }
-        } catch (error) { alert('Lỗi'); }
-    };
 
     copyResultBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(currentResultRaw).then(() => {
