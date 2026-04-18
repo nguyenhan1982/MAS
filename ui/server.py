@@ -28,26 +28,11 @@ file_lock = threading.Lock()
 WORKSPACE_ROOT = BASE_DIR
 UI_DIR = Path(__file__).parent
 
-@app.errorhandler(Exception)
-def handle_exception(e):
-    return jsonify({
-        "success": False,
-        "error": f"Loi he thong: {str(e)}",
-        "type": type(e).__name__
-    }), 500
-
 @app.route('/health')
 def health():
     return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()})
 
-@app.route('/')
-def index():
-    return send_from_directory(UI_DIR, 'index.html')
-
-@app.route('/<path:path>')
-def static_files(path):
-    return send_from_directory(UI_DIR, path)
-
+# CAC API ENDPOINTS DUOI DAY...
 def get_board_status():
     try:
         if not storage.board_exists():
