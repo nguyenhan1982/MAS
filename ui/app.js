@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // THAY THE URL DUOI DAY BANG URL RENDER CUA BAN (Vi du: https://mas-backend.onrender.com)
-    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'https://your-api-server.onrender.com';
+    // THAY THE URL DUOI DAY BANG URL RENDER CUA BAN
+    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'https://mas-m54w.onrender.com';
 
     const taskInput = document.getElementById('taskInput');
     const assignBtn = document.getElementById('assignBtn');
