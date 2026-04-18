@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiGravity | Multi-Agent Dashboard</title>
+    <link rel="stylesheet" href="style.css?v=1.1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner" id="mainSpinner"></div>
+        <div class="console-container" id="consoleContainer">
+            <div class="console-header">
+                <span>SYSTEM LOG - DECOMPOSING TASK</span>
+                <span class="console-status">STREAMING...</span>
+            </div>
+            <div class="console-body" id="consoleBody"></div>
+        </div>
+    </div>
+
+    <!-- Modal Xem Kết Quả -->
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalTitle">Kết quả nhiệm vụ</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-actions" style="position: absolute; top: 1.5rem; right: 4rem; display: flex; gap: 0.8rem; z-index: 100;">
+                    <button class="copy-btn" id="copyResultBtn" title="Sao chép kết quả">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        <span>Copy</span>
+                    </button>
+                    <button class="copy-btn" id="downloadPdfBtn" title="Tải báo cáo PDF" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: var(--success); display: none;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <span>Tải PDF</span>
+                    </button>
+                </div>
+                <div id="modalContent" class="markdown-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Chọn Agent cho Re-task -->
+    <div class="modal-overlay" id="agentSelectModal">
+        <div class="modal-container" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Chọn Agent Thực Hiện</h3>
+                <button class="close-modal" id="closeAgentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="agentListContainer" class="agent-status-panel">
+                    <!-- Agent items will be injected here -->
+                    <div style="text-align: center; color: var(--text-dim);">Đang quét mạng lưới...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Banner Cảnh báo dung lượng -->
+        <div id="boardStatusBanner" class="status-banner" style="display: none;">
+            <div class="banner-icon">⚠️</div>
+            <div class="banner-text" id="bannerText">Cảnh báo: Board sắp vượt ngưỡng dung lượng tối ưu.</div>
+        </div>
+
+        <header>
+            <div class="logo">ANTIGRAVITY</div>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                P2P Network Active
+            </div>
+        </header>
+
+        <section class="hero">
+            <h1>Hệ thống Điều phối Agents</h1>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Giao nhiệm vụ chiến lược, AI sẽ tự động phân rã và kích hoạt các Agent.</p>
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Nhập nhiệm vụ chiến lược của bạn tại đây... (VD: Quét lỗ hổng an ninh hệ thống)">
+                <button class="btn-assign" id="assignBtn">GIAO VIỆC</button>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            <main class="panel">
+                <div class="panel-header">
+                    <h2>Bản đồ Nhiệm vụ (Task Board)</h2>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button id="resetBoardBtn" class="btn-secondary" style="font-size: 0.75rem; border: 1px solid var(--accent); background: rgba(244, 63, 94, 0.1); padding: 0.3rem 0.8rem; border-radius: 4px; color: var(--accent); cursor: pointer;">RESET BOARD</button>
+                        <button id="refreshBoard" style="background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 0.8rem;">Làm mới</button>
+                    </div>
+                </div>
+                <div class="task-list" id="taskList">
+                    <!-- Tasks will be injected here -->
+                    <div style="text-align: center; color: var(--text-dim); padding: 2rem;">Đang tải dữ liệu...</div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
