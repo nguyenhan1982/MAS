@@ -136,7 +136,20 @@ def main_loop():
                 log(f"==> NHAN NHIEM VU: {task['title']}")
                 update_task_status_supabase(task["mission_id"], task["id"], "in_progress")
                 
-                log(f"Dang xu ly: {task['description'][:50]}...")
+                # Xu ly dac biet cho System Task: Tong hop bao cao bang Ollama Local
+                if "[SYSTEM] Tổng hợp" in task['title']:
+                    log(f"-> [SYSTEM EVENT] Kich hoat Ollama Local de tong hop Mission {task['mission_id']}")
+                    try:
+                        import synthesize_results
+                        synthesize_results.synthesize(task["mission_id"])
+                        log(f"✓ Hoan thanh System Task: {task['id']}")
+                        update_task_status_supabase(task["mission_id"], task["id"], "done", "Đã tổng hợp báo cáo thành công bằng Ollama Local.")
+                    except Exception as err:
+                        log(f"[!] Loi khi tong hop bang Ollama: {err}")
+                        update_task_status_supabase(task["mission_id"], task["id"], "pending", f"[ERROR] Lỗi: {err}")
+                    continue
+                
+                log(f"Dang xu pastoral_ly: {task['description'][:50]}...")
                 prompt = f"Nhiệm vụ: {task['title']}\nMô tả: {task['description']}"
                 response = call_ai({}, prompt)
                 

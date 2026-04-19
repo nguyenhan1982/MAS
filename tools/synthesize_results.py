@@ -8,10 +8,7 @@ import json
 import os
 import sys
 from pathlib import Path
-
-# Thiết lập vai trò Server để llm_client.py ưu tiên mô hình Cloud
-os.environ["MAS_ROLE"] = "server"
-
+# Khong ep buoc vai tro Server nua. De agent_core hoac CMD tu nhan dien role la agent.
 # Thêm đường dẫn để import các module local
 WORKSPACE_ROOT = Path(__file__).parent.parent
 sys.path.append(str(WORKSPACE_ROOT / "tools"))
