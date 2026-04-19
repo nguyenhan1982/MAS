@@ -137,10 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/mission/${missionId}/synthesize`, { method: 'POST' });
             
-            // Neu Backend tra ve 202, nghia la da bat dau chay ngam (hoac da tao task cho votranh_tonghop)
+            // Neu Backend tra ve 202, nghia la da bat dau chay ngam
             if (response.status === 202) {
-                const result = await response.json();
-                alert(result.message || 'Yêu cầu đang được xử lý ngầm...');
+                alert('Đang khởi tạo báo cáo AI ngầm... Báo cáo sẽ tự hiển thị trên Dashboard sau khoảng 1 phút. Bạn có thể tiếp tục làm việc khác.');
                 return;
             }
 

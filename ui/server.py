@@ -95,39 +95,25 @@ def get_status():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def bg_synthesize_task(mission_id):
+    try:
+        import synthesize_results
+        print(f"[THREAD] Starting background synthesis for {mission_id}")
+        synthesize_results.synthesize(mission_id)
+        print(f"[THREAD] Finished background synthesis for {mission_id}")
+    except Exception as e:
+        print(f"[THREAD ERROR] Background synthesis failed: {e}")
+
 @app.route('/api/mission/<mission_id>/synthesize', methods=['POST'])
 def synthesize_mission(mission_id):
     try:
-        # Ngưng hoàn toàn việc gọi AI trên server. Thay vào đó tạo Virtual Task cho votranh_tonghop
-        board = storage.get_board()
-        target_mission = next((m for m in board.get("missions", []) if m["id"] == mission_id), None)
+        # Su dung Threading thay vi Subprocess de dam bao an toan tren Cloud/Gunicorn
+        thread = threading.Thread(target=bg_synthesize_task, args=(mission_id,))
+        thread.start()
         
-        if not target_mission:
-            return jsonify({"success": False, "error": "Không tìm thấy Mission"}), 404
-            
-        task_id = f"SYN-{mission_id}"
-        has_syn_task = any(t["id"] == task_id for t in target_mission.get("tasks", []))
-        
-        if not has_syn_task:
-            sys_task = {
-                "id": task_id,
-                "title": f"[SYSTEM] Tổng hợp báo cáo",
-                "description": "Gọi Ollama tổng hợp kết quả của các Agent khác (Không sửa ID nhiệm vụ này)",
-                "assigned_to": "votranh_tonghop",
-                "status": "pending",
-                "result": ""
-            }
-            if "tasks" not in target_mission:
-                target_mission["tasks"] = []
-            target_mission["tasks"].append(sys_task)
-            storage.save_board(board)
-        else:
-            # Nếu đã từng tạo Task này nhưng muốn "Làm lại", ta reset nó về pending cho votranh nhặt
-            storage.update_task_atomic(task_id, {"status": "pending", "result": ""})
-            
         return jsonify({
             "success": True, 
-            "message": "Đã tạo nhiệm vụ ảo giao cho votranh_tonghop. Báo cáo sẽ tự hiển thị sau ~1 đến 3 phút."
+            "message": "AI Synthesis started in background. Please wait ~1 minute and refresh."
         }), 202
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
