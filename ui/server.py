@@ -95,16 +95,22 @@ def get_status():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def bg_synthesize_task(mission_id):
+    try:
+        import synthesize_results
+        print(f"[THREAD] Starting background synthesis for {mission_id}")
+        synthesize_results.synthesize(mission_id)
+        print(f"[THREAD] Finished background synthesis for {mission_id}")
+    except Exception as e:
+        print(f"[THREAD ERROR] Background synthesis failed: {e}")
+
 @app.route('/api/mission/<mission_id>/synthesize', methods=['POST'])
 def synthesize_mission(mission_id):
     try:
-        # Chay ngam (Popen) thay vi run de tranh timeout tren Cloud
-        subprocess.Popen(
-            [sys.executable, str(WORKSPACE_ROOT / "tools" / "synthesize_results.py"), mission_id],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            start_new_session=True
-        )
+        # Su dung Threading thay vi Subprocess de dam bao an toan tren Cloud/Gunicorn
+        thread = threading.Thread(target=bg_synthesize_task, args=(mission_id,))
+        thread.start()
+        
         return jsonify({
             "success": True, 
             "message": "AI Synthesis started in background. Please wait ~1 minute and refresh."
