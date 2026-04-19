@@ -177,8 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
         currentResultRaw = content;
         currentActiveMissionId = missionId;
         modalTitle.innerText = title;
-        if (!content || content.includes("[ERROR]")) {
+        if (!content) {
             modalContent.innerHTML = '<div style="padding: 2rem; text-align: center;">Chưa có dữ liệu báo cáo.</div>';
+        } else if (content.includes("[ERROR]")) {
+            modalContent.innerHTML = `<div style="padding: 2rem; text-align: center; color: #ff6b6b;">
+                    <strong>AI SYNTHESIS FAILED</strong><br><br>${content}
+                </div>`;
         } else {
             modalContent.innerHTML = marked.parse(content);
         }

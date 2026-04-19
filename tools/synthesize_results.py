@@ -82,7 +82,9 @@ DỮ LIỆU ĐẦU VÀO:
 
     if summary.startswith("[ERROR]"):
         print(f"\n[!] AI Synthesis Failed: {summary}")
-        # Không lưu kết quả lỗi vào Database để UI có thể nhận biết là 'chưa có báo cáo'
+        # Luu truc tiep ket qua loi de UI co the hien thi nguyen nhan loi
+        target_mission["report"] = summary
+        storage.save_board(board)
         return summary
 
     final_report = f"# BÁO CÁO TỔNG HỢP: {target_mission['goal']}\n\n"
