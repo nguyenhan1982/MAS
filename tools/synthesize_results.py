@@ -20,11 +20,11 @@ try:
     from llm_client import call_llm_with_fallback
     import storage
 except ImportError:
-    print("[ERROR] Không tìm thấy module cần thiết trong thư mục tools/")
+    print("[ERROR] Required module not found in tools/ folder")
     sys.exit(1)
 
 def synthesize(mission_id=None):
-    print("[*] Đang tải board dữ liệu...")
+    print("[*] Loading data board...")
     board = storage.get_board()
 
     missions = board.get("missions", [])
@@ -77,7 +77,7 @@ DỮ LIỆU ĐẦU VÀO:
 {context}
 """
 
-    print(f"[*] Đang tổng hợp cho Mission: {target_mission['id']}...")
+    print(f"[*] Synthesizing for Mission: {target_mission['id']}...")
     summary = call_llm_with_fallback(prompt, system_instruction="Bạn là AI đầu não thực hiện tổng hợp tri thức.")
 
     if summary.startswith("[ERROR]"):
@@ -93,12 +93,12 @@ DỮ LIỆU ĐẦU VÀO:
     
     # Cập nhật kết quả vào board
     target_mission["report"] = final_report
-    print(f"[*] Đang lưu báo cáo (Mode: {storage.STORAGE_MODE})...")
+    print(f"[*] Saving report (Mode: {storage.STORAGE_MODE})...")
     if storage.save_board(board):
-        print(f"✓ Đã cập nhật báo cáo thành công.")
+        print(f"[*] Report updated successfully.")
         return final_report
     else:
-        print("[!] Lỗi khi lưu báo cáo.")
+        print("[!] Error saving report.")
         return final_report
 
 if __name__ == "__main__":
@@ -112,4 +112,4 @@ if __name__ == "__main__":
             f.write(report)
     except: pass
     
-    print(f"\n[✓] Hoàn tất tổng hợp.")
+    print(f"\n[*] Synthesis complete.")

@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 _supabase_client = None
+STORAGE_MODE = "Supabase" # Mac dinh dung Cloud cho moi truong Votranh Hybrid
 
 def get_supabase_client():
     global _supabase_client

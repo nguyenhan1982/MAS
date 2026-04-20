@@ -126,7 +126,7 @@ def get_providers():
                     p["key"] = val
 
     # DEBUG
-    print(f"[*] Hệ thống đã nạp {len(final_providers)} nhà cung cấp AI: {[p['name'] for p in final_providers]}")
+    print(f"[*] AI System loaded {len(final_providers)} providers: {[p['name'] for p in final_providers]}")
     return final_providers
 
 LLM_PROVIDERS = get_providers()
@@ -201,7 +201,7 @@ def call_llm_with_fallback(prompt, system_instruction=""):
     
     for provider in LLM_PROVIDERS:
         try:
-            print(f"[*] Đang thử gọi AI: {provider['name']}...")
+            print(f"[*] Calling AI: {provider['name']}...")
             
             # Xử lý đặc biệt cho Google (Đã có Search Grounding tích hợp)
             if provider["type"] == "google":
@@ -222,7 +222,7 @@ def call_llm_with_fallback(prompt, system_instruction=""):
                 
         except Exception as e:
             last_error = str(e)
-            print(f"[!] Lỗi khi gọi {provider['name']}: {last_error}")
+            print(f"[!] Error calling {provider['name']}: {last_error}")
             continue
     
     import re
