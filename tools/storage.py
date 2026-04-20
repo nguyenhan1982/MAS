@@ -21,12 +21,12 @@ def get_supabase_client():
                 url: str = os.environ.get("SUPABASE_URL", "").strip()
                 key: str = os.environ.get("SUPABASE_KEY", "").strip()
                 if not url or not key:
-                    print("[!] Loi: Thieu SUPABASE_URL hoac SUPABASE_KEY trong cau hinh.")
+                    print("[!] Error: Missing SUPABASE_URL or SUPABASE_KEY in configuration.")
                     return None
                 _supabase_client = create_client(url, key)
                 if _supabase_client: break
             except Exception as e:
-                print(f"[!] Loi khoi tao Supabase Client (Lan {attempt+1}): {e}")
+                print(f"[!] Supabase Init Error (Attempt {attempt+1}): {e}")
                 time.sleep(2)
     return _supabase_client
 
@@ -53,6 +53,7 @@ def get_board() -> dict:
                 m_dict = {
                     "id": m["id"],
                     "goal": m["goal"],
+                    "report": m.get("report", ""),
                     "tasks": []
                 }
                 # Lọc tasks con
@@ -63,7 +64,7 @@ def get_board() -> dict:
                 
             return board
         except Exception as e:
-            print(f"[Supabase] Thử lại đọc Database (Lần {attempt+1}): {e}")
+            print(f"[Supabase] Retry reading Database (Attempt {attempt+1}): {e}")
             time.sleep(2)
             
     return {"updated_at": "", "missions": [], "tasks": []}
@@ -78,7 +79,7 @@ def save_board(board_data: dict) -> bool:
         missions = board_data.get("missions", [])
         for m in missions:
             # 1. Upsert mission
-            m_payload = {"id": m["id"], "goal": m["goal"]}
+            m_payload = {"id": m["id"], "goal": m["goal"], "report": m.get("report", "")}
             client.table("mas_missions").upsert(m_payload).execute()
             
             # 2. Upsert tasks
@@ -95,7 +96,7 @@ def save_board(board_data: dict) -> bool:
                 client.table("mas_tasks").upsert(t_payload).execute()
         return True
     except Exception as e:
-        print(f"[Supabase] Lỗi lưu Database: {e}")
+        print(f"[Supabase] Error saving Database: {e}")
         return False
 
 def update_task_atomic(task_id: str, updates: dict) -> bool:
@@ -112,7 +113,7 @@ def update_task_atomic(task_id: str, updates: dict) -> bool:
         client.table("mas_tasks").update(updates).eq("id", task_id).execute()
         return True
     except Exception as e:
-        print(f"[Supabase] Lỗi Update Task Atomic: {e}")
+        print(f"[Supabase] Error Update Task Atomic: {e}")
         return False
 
 def delete_mission(mission_id: str) -> bool:
@@ -123,7 +124,7 @@ def delete_mission(mission_id: str) -> bool:
         client.table("mas_missions").delete().eq("id", mission_id).execute()
         return True
     except Exception as e:
-        print(f"[Supabase] Loi xoa Mission: {e}")
+        print(f"[Supabase] Error deleting Mission: {e}")
         return False
 
 def delete_task(task_id: str) -> bool:
@@ -134,7 +135,7 @@ def delete_task(task_id: str) -> bool:
         client.table("mas_tasks").delete().eq("id", task_id).execute()
         return True
     except Exception as e:
-        print(f"[Supabase] Loi xoa Task: {e}")
+        print(f"[Supabase] Error deleting Task: {e}")
         return False
 
 def reset_board() -> bool:
@@ -146,7 +147,7 @@ def reset_board() -> bool:
         client.table("mas_missions").delete().neq("id", "VOID").execute()
         return True
     except Exception as e:
-        print(f"[Supabase] Loi Reset Board: {e}")
+        print(f"[Supabase] Error Reset Board: {e}")
         return False
 
 def get_board_size_mb() -> float:
