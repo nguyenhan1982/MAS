@@ -30,6 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${API_BASE_URL}/api/board`);
             const data = await response.json();
             currentMissions = data.missions || [];
+            
+            // Sắp xếp Mission mới nhất lên đầu (Dựa trên created_at)
+            currentMissions.sort((a, b) => {
+                const dateA = a.created_at || "";
+                const dateB = b.created_at || "";
+                // Nếu có created_at, sắp xếp theo ISO string giảm dần
+                if (dateA && dateB) return dateB.localeCompare(dateA);
+                // Fallback theo ID (M_MMDD_HHMM) nếu thiếu created_at
+                return b.id.localeCompare(a.id);
+            });
+
             updateUIStatus(data.status);
             renderBoard(currentMissions);
         } catch (error) {
