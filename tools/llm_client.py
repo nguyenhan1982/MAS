@@ -1,6 +1,6 @@
 """
 llm_client.py - Module điều phối AI với cơ chế Fallback.
-Thử nghiệm các mô hình theo thứ tự ưu tiên: Gemini -> Cerebras -> Sambanova -> Groq.
+Thử nghiệm các mô hình theo thứ tự ưu tiên: Cerebras -> Gemini -> Sambanova.
 """
 
 import json
@@ -98,8 +98,7 @@ def get_providers():
     env_keys = {
         "gemini": "GOOGLE_API_KEY",
         "cerebras": "CEREBRAS_API_KEY",
-        "sambanova": "SAMBANOVA_API_KEY",
-        "groq": "GROQ_API_KEY"
+        "sambanova": "SAMBANOVA_API_KEY"
     }
     
     for p in all_providers:

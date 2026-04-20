@@ -4,46 +4,45 @@
       "id": "gemini-2.5-flash",
       "name": "Gemini 2.5 Flash",
       "type": "google",
-      "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=GOOGLE_API_KEY",
+      "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=YOUR_GOOGLE_API_KEY",
       "model": "gemini-2.5-flash"
     },
     {
       "id": "gemini-3-flash",
       "name": "Gemini 3 Flash",
       "type": "google",
-      "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=GOOGLE_API_KEY",
+      "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=YOUR_GOOGLE_API_KEY",
       "model": "gemini-3-flash-preview"
+    },
+    {
+      "id": "gemini-3.1-flash-lite",
+      "name": "Gemini 3.1 Flash Lite",
+      "type": "google",
+      "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=YOUR_GOOGLE_API_KEY",
+      "model": "gemini-3.1-flash-lite-preview"
     },
     {
       "id": "cerebras-qwen",
       "name": "Qwen-3-235b (Cerebras)",
       "type": "openai",
       "url": "https://api.cerebras.ai/v1/chat/completions",
-      "key": "CEREBRAS_API_KEY",
+      "key": "",
       "model": "qwen-3-235b-a22b-instruct-2507"
     },
     {
       "id": "sambanova-deepseek",
-      "name": "DeepSeek-V3.2 (Sambanova)",
+      "name": "DeepSeek-V3.1 (Sambanova)",
       "type": "openai",
       "url": "https://api.sambanova.ai/v1/chat/completions",
-      "key": "SAMBANOVA_API_KEY",
-      "model": "DeepSeek-V3.2"
-    },
-    {
-      "id": "groq-kimi",
-      "name": "KimiK2 (Groq)",
-      "type": "openai",
-      "url": "https://api.groq.com/openai/v1/chat/completions",
-      "key": "GROQ_API_KEY",
-      "model": "moonshotai/kimi-k2-instruct-0905"
+      "key": "",
+      "model": "DeepSeek-V3.1"
     }
   ],
   "non_votranh_priority": [
+    "cerebras-qwen",
     "gemini-2.5-flash",
     "gemini-3-flash",
-    "cerebras-qwen",
-    "sambanova-deepseek",
-    "groq-kimi"
+    "gemini-3.1-flash-lite",
+    "sambanova-deepseek"
   ]
 }
